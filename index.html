@@ -1,4 +1,5 @@
-<!Doctype html>
+﻿<!Doctype html>
+<!--Robert Page-->
 <html>
 
 <head>
@@ -6,21 +7,19 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	<title>Calculator</title>
 	<!-- CSS Section -->
+	<link rel="stylesheet" href="\Scripts\lib\custom-css\themes\Custom.css" />
 	<link rel="stylesheet" href="\Scripts\lib\custom-css\themes\PurpleNight.min.css" />
 	<link rel="stylesheet" href="\Scripts\lib\custom-css\themes\jquery.mobile.icons.min.css" />
 	<link rel="stylesheet" href="\Scripts\lib\jquery-mobile-bower\css\jquery.mobile-1.4.5.min.css" </head>
 
 	<body>
 		<!-- Home Page Container -->
-		<div data-role="page" data-theme="c" id="home">
-			<div data-role="header">
-				<h1>Calculator</h1>
-			</div>
-
+		<div data-role="page" data-theme="c" id="home" class="fontwrapper">
+			
 			<!-- Main Content goes here -->
 			<div data-role="main" class="ui-content">
 				<!--<label style="text-align:right;">0</label>-->
-				<input type="text" name="display" id="calcOut" style="text-align:right;" placeholder="0" disabled>
+				<input type="text" name="display" id="calcOut" style="text-align:right;" placeholder="0" readonly>
 				<!-- Button Group -->
 				<div data-role="controlgroup" data-type="vertical">
 					<div class="ui-grid-c">
@@ -45,14 +44,6 @@
 					<div class="ui-block-d"><span><a href="#" class="ui-btn"> =</a></span></div>
 				</div>
 </div>
-
-
-			<!-- footer may or may not remain -->
-			<div data-role="footer" data-position="fixed">
-				<h1>&copy 2017 All Rights Reserved</h1>
-			</div>
-		</div>
-		<!-- end home page -->
 
 		<!-- JavaScript Section -->
 		<script src="\Scripts\lib\jquery\dist\jquery.min.js"></script>

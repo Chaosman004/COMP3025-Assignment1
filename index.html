@@ -22,32 +22,59 @@
 			<!-- Button Group -->
 			<div data-role="controlgroup" data-type="vertical">
 				<div class="ui-grid-c">
-					<div class="ui-block-a"><span><a href="#" class="ui-btn">AC</a></span></div>
-					<div class="ui-block-b"><span><a href="#" class="ui-btn"> +/-</a></span></div>
-					<div class="ui-block-c"><span><a href="#" class="ui-btn"> %</a></span></div>
-					<div class="ui-block-d"><span><a href="#" class="ui-btn"> ÷</a></span></div>
-					<div class="ui-block-a"><span><a href="#" class="ui-btn"> 7</a></span></div>
-					<div class="ui-block-b"><span><a href="#" class="ui-btn"> 8</a></span></div>
-					<div class="ui-block-c"><span><a href="#" class="ui-btn"> 9</a></span></div>
-					<div class="ui-block-d"><span><a href="#" class="ui-btn"> X</a></span></div>
-					<div class="ui-block-a"><span><a href="#" class="ui-btn"> 4</a></span></div>
-					<div class="ui-block-b"><span><a href="#" class="ui-btn"> 5</a></span></div>
-					<div class="ui-block-c"><span><a href="#" class="ui-btn"> 6</a></span></div>
-					<div class="ui-block-d"><span><a href="#" class="ui-btn"> -</a></span></div>
-					<div class="ui-block-a"><span><a href="#" class="ui-btn"> 1</a></span></div>
-					<div class="ui-block-b"><span><a href="#" class="ui-btn"> 2</a></span></div>
-					<div class="ui-block-c"><span><a href="#" class="ui-btn"> 3</a></span></div>
-					<div class="ui-block-d"><span><a href="#" class="ui-btn"> +</a></span></div>
-					<div class="ui-block-a" style="width:50%"><span><a href="#" class="ui-btn"> 0</a></span></div>
-					<div class="ui-block-b"><span><a href="#" class="ui-btn"> .</a></span></div>
-					<div class="ui-block-d"><span><a href="#" class="ui-btn"> =</a></span></div>
+					<div class="ui-block-a"><span><button class="ui-btn" id="ButtonClear">AC</button></span></div>
+					<div class="ui-block-b"><span><button class="ui-btn" id="ButtonNegative"> +/-</button></span></div>
+					<div class="ui-block-c"><span><button class="ui-btn" id="ButtonPercent"> %</button></span></div>
+					<div class="ui-block-d"><span><button class="ui-btn" id="ButtonDivide"> ÷</button></span></div>
+					<div class="ui-block-a"><span><button class="ui-btn" id="Button7" value="7"> 7</button></span></div>
+					<div class="ui-block-b"><span><button class="ui-btn" id="Button8" value="8"> 8</button></span></div>
+					<div class="ui-block-c"><span><button class="ui-btn" id="Button9" value="9"> 9</button></span></div>
+					<div class="ui-block-d"><span><button class="ui-btn" id="ButtonMultiply"> X</button></span></div>
+					<div class="ui-block-a"><span><button class="ui-btn" id="Button4" value="4"> 4</button></span></div>
+					<div class="ui-block-b"><span><button class="ui-btn" id="Button5" value="5"> 5</button></span></div>
+					<div class="ui-block-c"><span><button class="ui-btn" id="Button6" value="6"> 6</button></span></div>
+					<div class="ui-block-d"><span><button class="ui-btn" id="ButtonMinus"> -</button></span></div>
+					<div class="ui-block-a"><span><button class="ui-btn" id="Button1" value="1"> 1</button></span></div>
+					<div class="ui-block-b"><span><button class="ui-btn" id="Button2" value="2"> 2</button></span></div>
+					<div class="ui-block-c"><span><button class="ui-btn" id="Button3" value="3"> 3</button></span></div>
+					<div class="ui-block-d"><span><button class="ui-btn" id="ButtonPlus"> +</button></span></div>
+					<div class="ui-block-a" style="width:50%"><span><button class="ui-btn" id="Button0" value="0"> 0</button></span></div>
+					<div class="ui-block-b"><span><button class="ui-btn" id="ButtonDecimal"> .</button></span></div>
+					<div class="ui-block-d"><span><button class="ui-btn" id="ButtonEquals"> =</button></span></div>
 				</div>
 			</div>
-		</div>
 		<!-- JavaScript Section -->
 		<script src="\Scripts\lib\jquery\dist\jquery.min.js"></script>
 		<script src="\Scripts\lib\jquery-mobile-bower\js\jquery.mobile-1.4.5.min.js"></script>
-		<script> </script>
+		<script>
+//default to beginning of calculation
+var startCalc = 0;
+//use this function when any number button is presed
+	$('#Button0, #Button1, #Button2, #Button3, #Button4, #Button5, #Button6, #Button7, #Button8, #Button9').click(function(){
+		//get the value of the number button
+		var v = $(this).val();
+		//if it is the start of the calculation and the 0 button was pressed do nothing
+		if(startCalc==0&&v==0){
+
+		}
+		else{
+			//if it is the start of the calculation replace the 0 with a number and set calculator to append mode
+			if(startCalc==0){
+				$('#calcOut').val(v);
+				startCalc=1;	
+			}
+			else{
+				//append the number to the end of the text
+				$('#calcOut').val($('#calcOut').val() + v);
+			}
+		}
+	});
+	//reset the text area and return calculator to replace mode
+	$('#ButtonClear').click(function(){
+		$('#calcOut').val("0");
+		startCalc=0;
+	});
+</script>
 	</div>
 </body>
 </html>

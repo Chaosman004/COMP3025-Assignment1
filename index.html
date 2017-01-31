@@ -18,26 +18,26 @@
 	<div data-role="page" data-theme="c" id="home" class="fontwrapper">
 		<!-- Main Content goes here -->
 		<div data-role="main" class="ui-content">
-			<input type="text" name="display" id="calcOut" style="text-align:right;" placeholder="0" readonly>
+			<input type="text" name="display" id="calcOut" style="text-align:right;" value="0" readonly>
 			<!-- Button Group -->
 			<div data-role="controlgroup" data-type="vertical">
 				<div class="ui-grid-c">
 					<div class="ui-block-a"><span><button class="ui-btn" id="ButtonClear">AC</button></span></div>
 					<div class="ui-block-b"><span><button class="ui-btn" id="ButtonNegative"> +/-</button></span></div>
-					<div class="ui-block-c"><span><button class="ui-btn" id="ButtonPercent"> %</button></span></div>
-					<div class="ui-block-d"><span><button class="ui-btn" id="ButtonDivide"> ÷</button></span></div>
+					<div class="ui-block-c"><span><button class="ui-btn" id="ButtonPercent" value="5"> %</button></span></div>
+					<div class="ui-block-d"><span><button class="ui-btn" id="ButtonDivide" value="4"> ÷</button></span></div>
 					<div class="ui-block-a"><span><button class="ui-btn" id="Button7" value="7"> 7</button></span></div>
 					<div class="ui-block-b"><span><button class="ui-btn" id="Button8" value="8"> 8</button></span></div>
 					<div class="ui-block-c"><span><button class="ui-btn" id="Button9" value="9"> 9</button></span></div>
-					<div class="ui-block-d"><span><button class="ui-btn" id="ButtonMultiply"> X</button></span></div>
+					<div class="ui-block-d"><span><button class="ui-btn" id="ButtonMultiply" value="3"> X</button></span></div>
 					<div class="ui-block-a"><span><button class="ui-btn" id="Button4" value="4"> 4</button></span></div>
 					<div class="ui-block-b"><span><button class="ui-btn" id="Button5" value="5"> 5</button></span></div>
 					<div class="ui-block-c"><span><button class="ui-btn" id="Button6" value="6"> 6</button></span></div>
-					<div class="ui-block-d"><span><button class="ui-btn" id="ButtonMinus"> -</button></span></div>
+					<div class="ui-block-d"><span><button class="ui-btn" id="ButtonMinus" value="2"> -</button></span></div>
 					<div class="ui-block-a"><span><button class="ui-btn" id="Button1" value="1"> 1</button></span></div>
 					<div class="ui-block-b"><span><button class="ui-btn" id="Button2" value="2"> 2</button></span></div>
 					<div class="ui-block-c"><span><button class="ui-btn" id="Button3" value="3"> 3</button></span></div>
-					<div class="ui-block-d"><span><button class="ui-btn" id="ButtonPlus"> +</button></span></div>
+					<div class="ui-block-d"><span><button class="ui-btn" id="ButtonPlus" value="1"> +</button></span></div>
 					<div class="ui-block-a" style="width:50%"><span><button class="ui-btn" id="Button0" value="0"> 0</button></span></div>
 					<div class="ui-block-b"><span><button class="ui-btn" id="ButtonDecimal"> .</button></span></div>
 					<div class="ui-block-d"><span><button class="ui-btn" id="ButtonEquals"> =</button></span></div>
@@ -48,32 +48,107 @@
 		<script src="\Scripts\lib\jquery-mobile-bower\js\jquery.mobile-1.4.5.min.js"></script>
 		<script>
 //default to beginning of calculation
-var startCalc = 0;
+var startInput = 0, currentCalc = 0;
+//number storage for calculation
+var firstValue = 0, secondValue = 0, answerValue = 0;
 //use this function when any number button is presed
 	$('#Button0, #Button1, #Button2, #Button3, #Button4, #Button5, #Button6, #Button7, #Button8, #Button9').click(function(){
 		//get the value of the number button
-		var v = $(this).val();
+		var buttonNumber = $(this).val();
 		//if it is the start of the calculation and the 0 button was pressed do nothing
-		if(startCalc==0&&v==0){
+		if(startInput==0&&buttonNumber==0){
 
 		}
 		else{
 			//if it is the start of the calculation replace the 0 with a number and set calculator to append mode
-			if(startCalc==0){
-				$('#calcOut').val(v);
-				startCalc=1;	
+			if(startInput==0){
+				$('#calcOut').val(buttonNumber);
+				startInput=1;	
 			}
 			else{
 				//append the number to the end of the text
-				$('#calcOut').val($('#calcOut').val() + v);
+				$('#calcOut').val($('#calcOut').val() + buttonNumber);
 			}
 		}
 	});
+	//if there is no decimal point add a decimal point
+	$('#ButtonDecimal').click(function(){
+		if($('#calcOut').val().indexOf('.')==-1){
+			$('#calcOut').val($('#calcOut').val() + ".");
+			startInput=1;
+		}
+		else if(startInput==0){
+			//if we are starting out with 0. does not visually affect on load, 
+			//but after an caculation allows for the decimal to replace the answer
+			$('#calcOut').val("0.");
+			startInput=1;
+		}
+	});
+
 	//reset the text area and return calculator to replace mode
 	$('#ButtonClear').click(function(){
 		$('#calcOut').val("0");
-		startCalc=0;
+		startInput=0;
 	});
+	
+	//use this function whenever a operand was clicked
+	$('#ButtonPlus, #ButtonMinus, #ButtonMultiply, #ButtonDivide, #ButtonPercent').click(function(){
+		//get operand
+		var buttonNumber = $(this).val();
+		//load in first number and clear input area for next number
+		firstValue = parseFloat($('#calcOut').val());
+		$('#calcOut').val(0);
+		//allow starting of input to overwrite 0
+		startInput = 0;
+		//set calcuation to operand
+		currentCalc = buttonNumber;
+	});
+
+	// negative-positive switch
+	$('#ButtonNegative').click(function(){
+		$('#calcOut').val($('#calcOut').val()*-1);
+	});
+
+	//equals
+	$('#ButtonEquals').click(function(){
+		//read in second number to avoid excessiv calls of the parseFloat calcOut function
+		secondValue = parseFloat($('#calcOut').val());
+		//1 - plus, 2 - minus, 3 - multiply, 4 - divide, 5 - percent
+		if(currentCalc==1){
+			answerValue = firstValue + secondValue;
+			//avoid tiny number errors
+			answerValue = parseFloat(answerValue.toPrecision(12));
+			$('#calcOut').val(answerValue);
+			startInput = 0;
+			currentCalc = 0;
+		}
+		else if(currentCalc==2){
+			answerValue = (firstValue * 10 - secondValue * 10) / 10;
+			//avoid tiny number errors
+			answerValue = parseFloat(answerValue.toPrecision(12));
+			$('#calcOut').val(answerValue);
+			startInput = 0;
+			currentCalc = 0;
+		}
+		else if(currentCalc==3){
+			answerValue = firstValue * secondValue;
+			$('#calcOut').val(answerValue);
+			startInput = 0;
+			currentCalc = 0;
+		}
+		else if(currentCalc==4){
+			answerValue = firstValue / secondValue;
+			$('#calcOut').val(answerValue);
+			startInput = 0;
+			currentCalc = 0;
+		}
+		else if(currentCalc==5){
+			//Percent
+		}
+		else{
+			//do nothing 
+		}
+	})
 </script>
 	</div>
 </body>

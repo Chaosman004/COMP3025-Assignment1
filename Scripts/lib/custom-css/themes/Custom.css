@@ -8,7 +8,12 @@
 }
 #calcOut{
     font-size: 20px;
+    text-align:right;
 }
 #currentCalc{
     font-size: 10px;
+    text-align:right;
+}
+#zeroBlock{
+    width:50%;
 }

@@ -18,13 +18,14 @@
 	<div data-role="page" data-theme="c" id="home" class="fontwrapper">
 		<!-- Main Content goes here -->
 		<div data-role="main" class="ui-content">
-			<input type="text" name="display" id="calcOut" style="text-align:right;" value="0" readonly>
+			<input type="text" name="displayCalc" id="currentCalc" style="text-align:right;" value="" readonly>
+			<input type="text" name="displayNumber" id="calcOut" style="text-align:right;" value="0" readonly>
 			<!-- Button Group -->
 			<div data-role="controlgroup" data-type="vertical">
 				<div class="ui-grid-c">
 					<div class="ui-block-a"><span><button class="ui-btn" id="ButtonClear">AC</button></span></div>
 					<div class="ui-block-b"><span><button class="ui-btn" id="ButtonNegative"> +/-</button></span></div>
-					<div class="ui-block-c"><span><button class="ui-btn" id="ButtonPercent" value="5"> %</button></span></div>
+					<div class="ui-block-c"><span><button class="ui-btn" id="ButtonPercent"> %</button></span></div>
 					<div class="ui-block-d"><span><button class="ui-btn" id="ButtonDivide" value="4"> ÷</button></span></div>
 					<div class="ui-block-a"><span><button class="ui-btn" id="Button7" value="7"> 7</button></span></div>
 					<div class="ui-block-b"><span><button class="ui-btn" id="Button8" value="8"> 8</button></span></div>
@@ -48,15 +49,15 @@
 		<script src="\Scripts\lib\jquery-mobile-bower\js\jquery.mobile-1.4.5.min.js"></script>
 		<script>
 //default to beginning of calculation
-var startInput = 0, currentCalc = 0;
+var startInput = 0, currentCalc = 0, percentUsed = 0;
 //number storage for calculation
-var firstValue = 0, secondValue = 0, answerValue = 0;
+var firstValue = "nv", secondValue = "nv", answerValue = "nv";
 //use this function when any number button is presed
 	$('#Button0, #Button1, #Button2, #Button3, #Button4, #Button5, #Button6, #Button7, #Button8, #Button9').click(function(){
 		//get the value of the number button
 		var buttonNumber = $(this).val();
-		//if it is the start of the calculation and the 0 button was pressed do nothing
-		if(startInput==0&&buttonNumber==0){
+		//if it is the start of the calculation and the 0 button was pressed do nothing unless it is the second value
+		if(startInput==0&&buttonNumber==0&&firstValue=="nv"){
 
 		}
 		else{
@@ -76,6 +77,7 @@ var firstValue = 0, secondValue = 0, answerValue = 0;
 		if($('#calcOut').val().indexOf('.')==-1){
 			$('#calcOut').val($('#calcOut').val() + ".");
 			startInput=1;
+
 		}
 		else if(startInput==0){
 			//if we are starting out with 0. does not visually affect on load, 
@@ -89,19 +91,25 @@ var firstValue = 0, secondValue = 0, answerValue = 0;
 	$('#ButtonClear').click(function(){
 		$('#calcOut').val("0");
 		startInput=0;
+		$('#ButtonClear').text('AC');
+		firstValue="nv";
+		secondValue="nv";
+		answerValue="nv";
+		$('#currentCalc').val("");
 	});
 	
 	//use this function whenever a operand was clicked
-	$('#ButtonPlus, #ButtonMinus, #ButtonMultiply, #ButtonDivide, #ButtonPercent').click(function(){
+	$('#ButtonPlus, #ButtonMinus, #ButtonMultiply, #ButtonDivide').click(function(){
 		//get operand
 		var buttonNumber = $(this).val();
-		//load in first number and clear input area for next number
+		//load in first number
 		firstValue = parseFloat($('#calcOut').val());
-		$('#calcOut').val(0);
-		//allow starting of input to overwrite 0
+		//allow starting of input to overwrite
 		startInput = 0;
 		//set calcuation to operand
 		currentCalc = buttonNumber;
+		//start tracking
+		$('#currentCalc').val($('#currentCalc').val() + " " + firstValue.toString() + " " + $(this).text());
 	});
 
 	// negative-positive switch
@@ -109,11 +117,26 @@ var firstValue = 0, secondValue = 0, answerValue = 0;
 		$('#calcOut').val($('#calcOut').val()*-1);
 	});
 
+	//percent
+	$('#ButtonPercent').click(function(){
+		if(firstValue!="nv"){
+			secondValue = parseFloat($('#calcOut').val());
+			secondValue = (firstValue * secondValue) / 100;
+			//avoid tiny number errors
+			secondValue = parseFloat(secondValue.toPrecision(12));
+			percentUsed = 1;
+			$('#currentCalc').val($('#currentCalc').val() + " " + secondValue.toString());
+		}
+	});
+
 	//equals
 	$('#ButtonEquals').click(function(){
 		//read in second number to avoid excessiv calls of the parseFloat calcOut function
-		secondValue = parseFloat($('#calcOut').val());
-		//1 - plus, 2 - minus, 3 - multiply, 4 - divide, 5 - percent
+		if(percentUsed==0&&firstValue!="nv"){
+			secondValue = parseFloat($('#calcOut').val());
+			$('#currentCalc').val($('#currentCalc').val() + " " + secondValue.toString());
+		}
+		//1 - plus, 2 - minus, 3 - multiply, 4 - divide
 		if(currentCalc==1){
 			answerValue = firstValue + secondValue;
 			//avoid tiny number errors
@@ -137,18 +160,24 @@ var firstValue = 0, secondValue = 0, answerValue = 0;
 			currentCalc = 0;
 		}
 		else if(currentCalc==4){
-			answerValue = firstValue / secondValue;
+			if(secondValue!=0){
+				answerValue = firstValue / secondValue;
 			$('#calcOut').val(answerValue);
 			startInput = 0;
 			currentCalc = 0;
-		}
-		else if(currentCalc==5){
-			//Percent
+			}
+			else{
+			$('#calcOut').val("Cannot Divide by Zero!");
+			}
 		}
 		else{
 			//do nothing 
 		}
-	})
+		if(answerValue!="nv"){
+			$('#currentCalc').val($('#currentCalc').val() + " = ");
+		}
+		$('#ButtonClear').text('C');
+	});
 </script>
 	</div>
 </body>

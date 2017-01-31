@@ -6,3 +6,9 @@
     line-height:70px;
     height: 70%;
 }
+#calcOut{
+    font-size: 20px;
+}
+#currentCalc{
+    font-size: 10px;
+}

@@ -1,14 +1,16 @@
 //default to beginning of calculation
-var startInput = 0, currentCalc = 0, percentUsed = 0;
+var startInput = 0, currentCalc = 0, percentUsed = 0, digitLimit = 0, clearScreen=0;
 //number storage for calculation
 var firstValue = "nv", secondValue = "nv", answerValue = "nv";
 //use this function when any number button is presed
 $('#Button0, #Button1, #Button2, #Button3, #Button4, #Button5, #Button6, #Button7, #Button8, #Button9').click(function () {
+    //if equals has been pressed clear the top screen
+    ClearScreen();
     //get the value of the number button
     var buttonNumber = $(this).val();
     //if it is the start of the calculation and the 0 button was pressed do nothing unless it is the second value
-    if (startInput == 0 && buttonNumber == 0 && firstValue == "nv") {
-
+    if (startInput == 0 && buttonNumber == 0 && firstValue == "nv" || digitLimit == 12) {
+        //digitLimit limits the number of input digits
     }
     else {
         //if it is the start of the calculation replace the 0 with a number and set calculator to append mode
@@ -20,11 +22,13 @@ $('#Button0, #Button1, #Button2, #Button3, #Button4, #Button5, #Button6, #Button
             //append the number to the end of the text
             $('#calcOut').val($('#calcOut').val() + buttonNumber);
         }
+        digitLimit=digitLimit+1;
     }
 });
 //if there is no decimal point add a decimal point
 $('#ButtonDecimal').click(function () {
-    if ($('#calcOut').val().indexOf('.') == -1) {
+    ClearScreen();
+    if ($('#calcOut').val().indexOf('.') == -1&&digitLimit<11) {
         $('#calcOut').val($('#calcOut').val() + ".");
         startInput = 1;
 
@@ -41,15 +45,16 @@ $('#ButtonDecimal').click(function () {
 $('#ButtonClear').click(function () {
     $('#calcOut').val("0");
     startInput = 0;
-    $('#ButtonClear').text('AC');
     firstValue = "nv";
     secondValue = "nv";
     answerValue = "nv";
-    $('#currentCalc').val("");
+    ClearScreen();
+    digitLimit=0;
 });
 
 //use this function whenever a operand was clicked
 $('#ButtonPlus, #ButtonMinus, #ButtonMultiply, #ButtonDivide').click(function () {
+    ClearScreen();
     //get operand
     var buttonNumber = $(this).val();
     //load in first number
@@ -60,15 +65,18 @@ $('#ButtonPlus, #ButtonMinus, #ButtonMultiply, #ButtonDivide').click(function ()
     currentCalc = buttonNumber;
     //start tracking
     $('#currentCalc').val($('#currentCalc').val() + " " + firstValue.toString() + " " + $(this).text());
+    digitLimit=0;
 });
 
 // negative-positive switch
 $('#ButtonNegative').click(function () {
+    ClearScreen();
     $('#calcOut').val($('#calcOut').val() * -1);
 });
 
 //percent
 $('#ButtonPercent').click(function () {
+    ClearScreen();
     if (firstValue != "nv") {
         secondValue = parseFloat($('#calcOut').val());
         secondValue = (firstValue * secondValue) / 100;
@@ -126,7 +134,14 @@ $('#ButtonEquals').click(function () {
     }
     if (answerValue != "nv") {
         $('#currentCalc').val($('#currentCalc').val() + " = ");
+        digitLimit=0;
+        clearScreen=1;
     }
     percentUsed = 0;
-    $('#ButtonClear').text('C');
 });
+function ClearScreen(){
+    if(clearScreen==1){
+        $('#currentCalc').val('');
+        clearScreen=0;
+    }
+}
